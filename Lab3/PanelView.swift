@@ -1,17 +1,14 @@
 import SwiftUI
 
-struct ContentView: View{
-  @State var ileRazy : Int = 0
+struct PanelView: View {
+  @Binding var ileRazy: Int
   var body: some View{
-    VStack(alignment: .center){
-      Text("Wcisnij przycisk").foregroundColor(.blue)
-      PanelView(ileRazy: $ileRazy)
-      Text("Wcisnieto \(ileRazy) razy").foregroundColor(.blue)
-          }.padding()
+    VStack{
+      Button(action: {
+        ileRazy += 1
+      }){
+        Text("Wcisnij")
+      }
     }
-  }
-struct ContentView_Previews: PreviewProvider{
-  static var previews: some View{
-    ContentView()
   }
 }
