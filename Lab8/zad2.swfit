@@ -1,0 +1,113 @@
+import SwiftUI
+struct ContentView: View {
+    @State private var backgroundColor = Color.white
+    @State private var selectedOption = ""
+    var body: some View {
+        ZStack {
+            backgroundColor.edgesIgnoringSafeArea(.all)
+            VStack {
+                
+                HStack {
+                    
+                    MenuView(selectedOption: $selectedOption)
+                        .padding(.bottom, 20).font(.title)
+                    Spacer()
+                    
+                }
+                Spacer()
+            
+                .padding(.horizontal)
+                
+                Text("Wybrana opcja: \(selectedOption)" )
+                    .font(.title)
+                    .padding()
+            
+                
+                VStack(spacing: 10) {
+                    
+                    ColorOptionsView(backgroundColor: $backgroundColor)
+                }
+            }
+        }
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
+
+
+import Foundation
+import SwiftUI
+
+struct MenuView: View {
+    @Binding var selectedOption: String
+    var body: some View {
+        
+        Menu("≡") {
+            Button(action: {
+                self.selectedOption = "Opcja 1"
+            }) {
+                Text("Opcja 1")
+            }
+
+            Menu("Option 2") {
+                Button(action: {
+                    self.selectedOption = "Opcja 2.1"
+                }) {
+                    Text("Opcja 2.1")
+                }
+                Button(action: {
+                    self.selectedOption = "Opcja 2.2"
+                }) {
+                    Text("Opcja 2.2")
+                }
+            }
+ 
+            Menu("Opcja 3") {
+                Button(action: {
+                    self.selectedOption = "Opcja 3.1"
+                }) {
+                    Text("Opcja 3.1")
+                }
+                Button(action: {
+                    self.selectedOption = "Opcja 3.2"
+                }) {
+                    Text("Opcja 3.2")
+                }
+            }
+        }
+        .font(.headline)
+        .padding()
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(10)
+    }
+}
+struct ColorOptionsView: View {
+    @Binding var backgroundColor: Color
+    var body: some View {
+        HStack {
+            ColorOption(color: .red, backgroundColor: $backgroundColor)
+            ColorOption(color: .green, backgroundColor: $backgroundColor)
+            ColorOption(color: .blue, backgroundColor: $backgroundColor)
+            ColorOption(color: .white, backgroundColor: $backgroundColor)
+        }
+        .padding()
+    }
+}
+struct ColorOption: View {
+    let color: Color
+    @Binding var backgroundColor: Color
+    var body: some View {
+        Button(action: {
+            self.backgroundColor = self.color
+        }) {
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundColor(color)
+                .frame(width: 50, height: 50)
+                .border(.black)
+        }
+    }
+}
