@@ -19,15 +19,16 @@ struct ContentView: View {
             List {
                 ForEach(cars) { car in
                     CarRow(car: car)
-                        .gesture(
-                            TapGesture()
-                                .onEnded { _ in
-                                    withAnimation {
-                                        self.cars.removeAll(where: { $0.id == car.id })
-                                            }
-                                        }
-                            )
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button(action: {
+                                self.cars.removeAll(where: { $0.id == car.id })
+                            }) {
+                                Image(systemName: "trash")
+                            }
+                            .foregroundColor(.white)
+                            .background(Color.red)
                         }
+                }
             }
             .navigationBarTitle("Cars")
         }
@@ -37,22 +38,5 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-    }
-}
-
-
-import SwiftUI
-
-struct CarRow: View {
-    let car: Car
-    var body: some View {
-        HStack {
-            Image(car.logo)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 60, height: 60)
-            Text("\(car.brand) \(car.model)")
-                .font(.title)
-        }
     }
 }
