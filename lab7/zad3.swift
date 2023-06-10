@@ -7,134 +7,65 @@ struct Book: Identifiable {
     var availableCopies: Int
 }
 
-struct AuthorSearchView: View {
-    
-    @State private var searchTerm = ""
-    
-    let books = [
-        Book(author: "J.K. Rowling", title: "Harry Potter and the Philosopher's Stone", availableCopies: 3),
-        Book(author: "J.K. Rowling", title: "Harry Potter and the Chamber of Secrets", availableCopies: 1),
-        Book(author:"George Orwell", title:"1984",availableCopies :5)
-        
-        // Add more books here
-    ]
-    
-    var body : some View{
-        
-        NavigationView{
-            VStack{
-                HStack{
-                    TextField("Wyszukaj autora...", text:$searchTerm)
-                        .padding(.horizontal,20)
-                    
-                    Button(action:{
-                        self.searchTerm=""
-                    }){
-                        Image(systemName:"xmark.circle.fill")
-                            .opacity(searchTerm=="" ?0 :1 )
-                        
-                    }
-                }.padding(.horizontal,10).padding(.top,5)
-                
-                List(books.filter({book in book.author.contains(searchTerm) || searchTerm.isEmpty})) { book in
-                    
-                    NavigationLink(destination:
-                                    BookDetailView(bookDetailAuthor:
-                                                        book.author,
-                                                    books:self.books)){
-                                                        
-                                                        VStack(alignment:.leading){
-                                                            Text(book.title)
-                                                                .font(.headline)
-                                                            
-                                                            Text("\(book.availableCopies) egzemplarzy dostępnych")
-                                                                .foregroundColor(Color.gray)
-
-                                                        }
-                                    }
-                                    
-                                
-                            }}
-                            
-                        
-                        .navigationBarTitle(Text("Książki"))
-                        }
-                        
-                    }
-}
-
-struct BookDetailView:View{
-    
-    let bookDetailAuthor:String
-    var books:[Book]
-    
-    var body:some View{
-        
-        VStack(alignment:.leading){
-            
-            Text("\(bookDetailAuthor)")
-                .font(.headline)
-            List(books.filter({$0.author==bookDetailAuthor})){ book in
-                
-                HStack{
-                    Text(book.title)
-                    
-                    Spacer()
-                    
-                    Text("\(book.availableCopies) egzemplarzy dostępnych")
-                        .foregroundColor(Color.gray)
-
-                }
-
-            }
-            
-            
-        }.padding(.horizontal,10).padding(.top,5)
- 
-    }
-
-}
-
 struct ContentView: View {
-    
-    @State private var authorName = ""
+    @State private var searchText = ""
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 20) {
-                TextField("Nazwisko autora", text: $authorName)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+            VStack {
+                TextField("Wpisz autora", text: $searchText)
+                    .padding(.horizontal)
                 
                 NavigationLink(destination:
-                                AuthorSearchView(searchTerm:self.authorName)){
-                                    
-                                    Text("Szukaj książek")
-                                        .fontWeight(.semibold)
-                                        .frame(minWidth: 0, maxWidth: .infinity)
-                                        .padding()
-                                        .foregroundColor(.white)
-                                        .background(Color.blue.opacity(0.8))
-                                        .cornerRadius(40)                     
-                            }.disabled(authorName.isEmpty || authorName.trimmingCharacters(in:.whitespaces).isEmpty )
- 
-                        Spacer()
-
-               
-            }.padding()
-            
-
-
-            
-        }.navigationTitle(Text("Wyszukiwanie książek"))
-
-}
+                    BookListView(searchAuthor: searchText)) {
+                        Text("Szukaj")
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                    }
+            }.navigationTitle("Wyszukiwanie książek")
+        }
+    }
 }
 
-struct ContentView_Previews : PreviewProvider {
+struct BookListView : View {
+    
+    let books = [
+        Book(author:"Adam Mickiewicz", title:"Pan Tadeusz", availableCopies: 5),
+        Book(author:"Henryk Sienkiewicz", title:"Quo Vadis", availableCopies: 3),
+        Book(author:"Juliusz Słowacki", title:"Balladyna", availableCopies :2),
+        Book(author:"Eliza Orzeszkowa ",title :"Nad Niemnem" ,availableCopies :1 ),
+        
+     ]
+     
+     let searchAuthor:String
+    
+     func filterBooks(_ bookList:[Book], _ authorName:String) -> [Book]{
+         return bookList.filter {$0.author == authorName}
+     }
 
-static var previews : some View {
+       var body:some View{
+           List(filterBooks(books,searchAuthor)){book in
+               HStack(spacing :20){
+                   Text(book.title).bold()
+                   Spacer()
 
-ContentView()
+                   Text("Dostępne egzemplarze: \(book.availableCopies)")
+               }
+           }.navigationTitle("\(searchAuthor) - książki")
+       }
 
 }
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
+
+struct BookListView_Previews : PreviewProvider{
+    static var previews:some View{
+        BookListView(searchAuthor:"Adam Mickiewicz")
+    }
 }
